@@ -210,3 +210,6 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+#Ignore the config file
+HoneypotDataDisplay/HoneypotDataDisplay/config.ini
