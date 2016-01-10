@@ -1,0 +1,145 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="jumbotron">
+   <h1>Cookie Jar</h1>
+   <p class="lead">I noticed a lot of automated login attempts on SSH on my server a while back.  Out of boredom over winter break, I decided to start logging them.</p>
+   <p>Eventually I want to hook this into a GeoIP database, and have a nice map showing where the majority of these attempts come from.</p>
+</div>
+
+<div class="row">
+   <div class="col-md-6">
+      <blockquote class="blockquote">
+         <p>{{ count }}</p>
+         <footer>Attempts logged</footer>
+      </blockquote>
+   </div>
+   <div class="col-md-6">
+      <blockquote class="blockquote-reverse">
+         <p>'{{ topUser }}':'{{ topPassword }}'</p>
+         <footer>Most common password &amp; username combination</footer>
+      </blockquote>
+   </div>
+</div>
+
+
+<div class="row">
+   <div class="col-md-4">
+      <div class="panel panel-default">
+         <div class="panel-heading">Top 10 passwords</div>
+         <div class="panel-body">
+            <div id="passwords" style="min-height: 350px; width: 100%"></div>
+         </div>
+      </div>
+   </div>
+   <div class="col-md-4">
+      <div class="panel panel-default">
+         <div class="panel-heading">Top 10 usernames</div>
+         <div class="panel-body">
+            <div id="usernames" style="min-height: 350px; width: 100%"></div>
+         </div>
+      </div>
+   </div>
+   <div class="col-md-4">
+      <div class="panel panel-default">
+         <div class="panel-heading">Top 10 attackers</div>
+         <div class="panel-body">
+            <div id="sources" style="min-height: 350px; width: 100%"></div>
+         </div>
+      </div>
+   </div>
+</div>
+
+<div class="row">
+   <div class="col-md-12">
+      <div class="panel panel-default">
+         <div class="panel-heading">50 Latest Attempts</div>
+         <table class="table">
+            <thead>
+               <tr>
+                  <th>Date</th>
+                  <th>Source IP</th>
+                  <th>Username</th>
+                  <th>Password</th>
+               </tr>
+            </thead>
+            <tbody>
+            {% for line in page_data %}
+            <tr>
+               <td>{{ line['datetime'] }}</td>
+               <td>{{ line['ip'] }}</td>
+               <td>{{ line['username'] }}</td>
+               <td>{{ line['password'] }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+         </table>
+      </div>
+   </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+
+<script src="/static/scripts/flot/jquery.flot.js"></script>
+<script src="/static/scripts/flot/jquery.flot.pie.js"></script>
+<script type="text/javascript">
+$(function () {
+      function labelFormatter(label, series) {
+      return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" + label + " - " + Math.round(series.percent) + "%</div>";
+      }
+      var pie_chart_options = {
+series: {
+pie: {
+show: true,
+radius: 1,
+label: {
+show: true,
+radius: 2/3,
+formatter: labelFormatter,
+threshold: 0.09,
+background: {
+opacity: 0.8
+}
+}
+}
+},
+legend: {
+show: false
+        }
+};
+
+$.ajax({
+url: '/_password_summary',
+type: 'GET',
+dataType: "json",
+success: (function(data) {
+   $.plot('#passwords', data.passwords, pie_chart_options);
+   })
+});
+
+$.ajax({
+url: '/_ip_summary',
+type: 'GET',
+dataType: "json",
+success: (function (data) {
+   $.plot('#sources', data.sources, pie_chart_options);
+   })
+});
+
+$.ajax({
+url: '/_username_summary',
+type: 'GET',
+dataType: "json",
+success: (function (data) {
+   $.plot('#usernames', data.usernames, pie_chart_options);
+   })
+});
+
+});
+</script>
+
+{% endblock %}
