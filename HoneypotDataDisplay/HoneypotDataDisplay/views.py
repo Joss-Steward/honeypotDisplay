@@ -10,12 +10,10 @@ import json
 
 def getCount():
     result = helpers.query("SELECT count(*) FROM sshattempts;", one = True)
-    print(result)
     return result['count']
 
 def getTopCombo():
     topCombo = helpers.query("SELECT username, password FROM sshattempts GROUP BY username, password ORDER BY count(ID) DESC;", one = True)
-    print(topCombo)
     return topCombo
 
 @app.route('/favicon.ico')

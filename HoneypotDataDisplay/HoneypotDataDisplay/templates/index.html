@@ -37,16 +37,16 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-body">
-                <h1 class="text-center">'{{ topUser }}':'{{ topPassword }}'</h1>
-                <p class="text-center">Most common password &amp; username combination</p>
+                <h1 class="text-center">{{ count }}</h1>
+                <p class="text-center">Total attempts logged</p>
             </div>
         </div>
     </div>
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-body">
-                <h1 class="text-center">{{ count }}</h1>
-                <p class="text-center">Attempts logged</p>
+                <h1 class="text-center">'{{ topUser }}':'{{ topPassword }}'</h1>
+                <p class="text-center">Most common password &amp; username combination</p>
             </div>
         </div>
     </div>
@@ -142,6 +142,7 @@
 <script src="/static/scripts/flot/jquery.flot.js"></script>
 <script src="/static/scripts/flot/jquery.flot.pie.js"></script>
 <script src="/static/scripts/flot/jquery.flot.time.js"></script>
+<script src="/static/scripts/flot/jquery.flot.resize.js"></script>
 <script type="text/javascript">
 $(function () {
     $.ajaxSetup({
