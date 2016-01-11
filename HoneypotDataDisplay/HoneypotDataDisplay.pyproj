@@ -32,6 +32,12 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="HoneypotDataDisplay\helpers.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HoneypotDataDisplay\settings.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="runserver.py" />
     <Compile Include="HoneypotDataDisplay\__init__.py" />
     <Compile Include="HoneypotDataDisplay\views.py" />

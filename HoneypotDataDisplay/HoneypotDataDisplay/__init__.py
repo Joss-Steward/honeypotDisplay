@@ -3,7 +3,14 @@ The flask application package.
 """
 
 from flask import Flask
+import HoneypotDataDisplay.settings
 app = Flask(__name__)
 
-import HoneypotDataDisplay.views
+# Load all the settings and stuff
+settings.init()
 
+app.debug = settings.DebugEnabled
+
+print(settings.ConnectionString)   
+
+import HoneypotDataDisplay.views

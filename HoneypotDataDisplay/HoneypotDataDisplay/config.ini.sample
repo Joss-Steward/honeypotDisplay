@@ -1,2 +1,5 @@
-[PostgreSQL Config]
-ConnectionString=""
+[PostgreSQL_Config]
+ConnectionString: ""
+
+[Etc]
+Debug: False

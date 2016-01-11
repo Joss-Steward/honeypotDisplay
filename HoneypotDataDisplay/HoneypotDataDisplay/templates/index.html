@@ -31,6 +31,15 @@
          <div class="panel-body">
             <div id="passwords" style="min-height: 350px; width: 100%"></div>
          </div>
+          <table class="table" id="passwords-table">
+              <thead>
+                  <tr>
+                      <th>Password</th>
+                      <th>Count</th>
+                  </tr>
+              </thead>
+              <tbody></tbody>
+          </table>
       </div>
    </div>
    <div class="col-md-4">
@@ -39,6 +48,15 @@
          <div class="panel-body">
             <div id="usernames" style="min-height: 350px; width: 100%"></div>
          </div>
+          <table class="table" id="usernames-table">
+              <thead>
+                  <tr>
+                      <th>Username</th>
+                      <th>Count</th>
+                  </tr>
+              </thead>
+              <tbody></tbody>
+          </table>
       </div>
    </div>
    <div class="col-md-4">
@@ -47,6 +65,15 @@
          <div class="panel-body">
             <div id="sources" style="min-height: 350px; width: 100%"></div>
          </div>
+          <table class="table" id="sources-table">
+              <thead>
+                  <tr>
+                      <th>Attacker</th>
+                      <th>Count</th>
+                  </tr>
+              </thead>
+              <tbody></tbody>
+          </table>
       </div>
    </div>
 </div>
@@ -67,7 +94,7 @@
             <tbody>
             {% for line in page_data %}
             <tr>
-               <td>{{ line['datetime'] }}</td>
+               <td>{{ line['datetime'].strftime('%Y-%m-%d %H:%M:%S') }}</td>
                <td>{{ line['ip'] }}</td>
                <td>{{ line['username'] }}</td>
                <td>{{ line['password'] }}</td>
@@ -88,57 +115,66 @@
 <script src="/static/scripts/flot/jquery.flot.pie.js"></script>
 <script type="text/javascript">
 $(function () {
-      function labelFormatter(label, series) {
-      return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" + label + " - " + Math.round(series.percent) + "%</div>";
-      }
-      var pie_chart_options = {
-series: {
-pie: {
-show: true,
-radius: 1,
-label: {
-show: true,
-radius: 2/3,
-formatter: labelFormatter,
-threshold: 0.09,
-background: {
-opacity: 0.8
-}
-}
-}
-},
-legend: {
-show: false
+    $.ajaxSetup({
+        error: function (x, status, error) {
+            alert("An error occurred while fetching data from the server: " + error);
         }
-};
+    });
 
-$.ajax({
-url: '/_password_summary',
-type: 'GET',
-dataType: "json",
-success: (function(data) {
-   $.plot('#passwords', data.passwords, pie_chart_options);
-   })
-});
+    function labelFormatter(label, series) {
+        return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" + label + " - " + Math.round(series.percent) + "%</div>";
+    };
 
-$.ajax({
-url: '/_ip_summary',
-type: 'GET',
-dataType: "json",
-success: (function (data) {
-   $.plot('#sources', data.sources, pie_chart_options);
-   })
-});
+    var pie_chart_options = {
+        series: {
+            pie: {
+                show: true,
+                radius: 1,
+                label: {
+                    show: true,
+                    radius: 2 / 3,
+                    formatter: labelFormatter,
+                    threshold: 0.09,
+                    background: {
+                        opacity: 0.2
+                    }
+                }
+            }
+        },
+        legend: {
+            show: false
+        }
+    };
 
-$.ajax({
-url: '/_username_summary',
-type: 'GET',
-dataType: "json",
-success: (function (data) {
-   $.plot('#usernames', data.usernames, pie_chart_options);
-   })
-});
+    $.ajax({
+        url: "{{ url_for('_home') }}",
+        type: 'GET',
+        dataType: "json",
+        success: (function (data) {
+            /* Plot the passwords and add them to the table */
+            $.plot('#passwords', data.passwords, pie_chart_options);
 
+            data.passwords.forEach(function (entry) {
+                $("#passwords-table tbody").append("<tr><td>" + entry.label + "</td><td>" + entry.data + "</td></tr>");
+            });
+
+
+            /* Plot the usernames and add them to the table */
+            $.plot('#usernames', data.usernames, pie_chart_options);
+
+            data.usernames.forEach(function (entry) {
+                $("#usernames-table tbody").append("<tr><td>" + entry.label + "</td><td>" + entry.data + "</td></tr>");
+            });
+
+
+            /* Plot the sources and add them to the table */
+            $.plot('#sources', data.sources, pie_chart_options);
+
+            data.sources.forEach(function (entry) {
+                $("#sources-table tbody").append("<tr><td>" + entry.label + "</td><td>" + entry.data + "</td></tr>");
+            });
+        })
+    });
 });
 </script>
 
