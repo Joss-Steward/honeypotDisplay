@@ -2,25 +2,24 @@
 
 {% block content %}
 
-<div class="jumbotron">
-   <h1>Cookie Jar</h1>
-   <p class="lead">I noticed a lot of automated login attempts on SSH on my server a while back.  Out of boredom over winter break, I decided to start logging them.</p>
-   <p>Eventually I want to hook this into a GeoIP database, and have a nice map showing where the majority of these attempts come from.</p>
+<div class="page-header">
+    <h1>
+        <span>Cookie Jar</span>
+        <button class="btn btn-primary pull-right" type="button" data-toggle="collapse" data-target="#aboutBox" aria-expanded="false" aria-controls="aboutBox">
+            About
+        </button>
+    </h1>
 </div>
 
 <div class="row">
-   <div class="col-md-6">
-      <blockquote class="blockquote">
-         <p>{{ count }}</p>
-         <footer>Attempts logged</footer>
-      </blockquote>
-   </div>
-   <div class="col-md-6">
-      <blockquote class="blockquote-reverse">
-         <p>'{{ topUser }}':'{{ topPassword }}'</p>
-         <footer>Most common password &amp; username combination</footer>
-      </blockquote>
-   </div>
+    <div class="col-md-12">
+        <div class="collapse" id="aboutBox">
+            <div class="well">
+                <p class="lead">I noticed a lot of automated login attempts on SSH on my server a while back.  Out of boredom over winter break, I decided to start logging them.</p>
+                <p>Eventually I want to hook this into a GeoIP database, and have a nice map showing where the majority of these attempts come from.</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row">
@@ -29,6 +28,25 @@
             <div class="panel-heading">Attempts in the last 24 hours</div>
             <div class="panel-body">
                 <div id="latest-attempts" style="min-height: 350px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h1 class="text-center">'{{ topUser }}':'{{ topPassword }}'</h1>
+                <p class="text-center">Most common password &amp; username combination</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h1 class="text-center">{{ count }}</h1>
+                <p class="text-center">Attempts logged</p>
             </div>
         </div>
     </div>
@@ -187,7 +205,7 @@ $(function () {
 
             /* Now we just have to do a little massaging to get the historical data into the right format to chart */
             var history = [];
-            var today = new Date().getTime() + (5 * 60 * 1000);
+            var today = new Date().getTime();
             var yesterday = new Date(today - (25 * 60 * 60 * 1000));
 
             data.history.forEach(function (entry) {
@@ -199,7 +217,7 @@ $(function () {
                     mode: "time",
                     minTickSize: [1, "hour"],
                     min: yesterday,
-                    max: today,
+                    max: (new Date().getTime()),
                     timezone: "chicago"
                 }
             });
