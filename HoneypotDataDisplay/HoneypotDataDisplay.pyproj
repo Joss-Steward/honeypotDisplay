@@ -55,6 +55,7 @@
     <Content Include="HoneypotDataDisplay.ini" />
     <Content Include="HoneypotDataDisplay\config.ini" />
     <Content Include="HoneypotDataDisplay\config.ini.sample" />
+    <Content Include="HoneypotDataDisplay\static\favicon.ico" />
     <Content Include="HoneypotDataDisplay\static\scripts\flot\excanvas.js" />
     <Content Include="HoneypotDataDisplay\static\scripts\flot\excanvas.min.js" />
     <Content Include="HoneypotDataDisplay\static\scripts\flot\jquery.colorhelpers.js" />
