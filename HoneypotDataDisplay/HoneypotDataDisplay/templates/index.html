@@ -194,8 +194,6 @@ $(function () {
                 history.push([entry.t, entry.count]);
             });
 
-            console.log(history);
-
             $.plot('#latest-attempts', [history], {
                 xaxis: {
                     mode: "time",

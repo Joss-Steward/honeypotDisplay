@@ -11,6 +11,4 @@ settings.init()
 
 app.debug = settings.DebugEnabled
 
-print(settings.ConnectionString)   
-
 import HoneypotDataDisplay.views
