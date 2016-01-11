@@ -23,6 +23,16 @@
    </div>
 </div>
 
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-success">
+            <div class="panel-heading">Attempts in the last 24 hours</div>
+            <div class="panel-body">
+                <div id="latest-attempts" style="min-height: 350px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="row">
    <div class="col-md-4">
@@ -113,6 +123,7 @@
 
 <script src="/static/scripts/flot/jquery.flot.js"></script>
 <script src="/static/scripts/flot/jquery.flot.pie.js"></script>
+<script src="/static/scripts/flot/jquery.flot.time.js"></script>
 <script type="text/javascript">
 $(function () {
     $.ajaxSetup({
@@ -172,6 +183,27 @@ $(function () {
 
             data.sources.forEach(function (entry) {
                 $("#sources-table tbody").append("<tr><td>" + entry.label + "</td><td>" + entry.data + "</td></tr>");
+            });
+
+            /* Now we just have to do a little massaging to get the historical data into the right format to chart */
+            var history = [];
+            var today = new Date().getTime() + (5 * 60 * 1000);
+            var yesterday = new Date(today - (25 * 60 * 60 * 1000));
+
+            data.history.forEach(function (entry) {
+                history.push([entry.t, entry.count]);
+            });
+
+            console.log(history);
+
+            $.plot('#latest-attempts', [history], {
+                xaxis: {
+                    mode: "time",
+                    minTickSize: [1, "hour"],
+                    min: yesterday,
+                    max: today,
+                    timezone: "chicago"
+                }
             });
         })
     });
