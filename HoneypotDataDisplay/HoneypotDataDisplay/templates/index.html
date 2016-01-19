@@ -15,8 +15,10 @@
     <div class="col-md-12">
         <div class="collapse" id="aboutBox">
             <div class="well">
-                <p class="lead">I noticed a lot of automated login attempts on SSH on my server a while back.  Out of boredom over winter break, I decided to start logging them.</p>
-                <p>Eventually I want to hook this into a GeoIP database, and have a nice map showing where the majority of these attempts come from.</p>
+                <p class="lead">SSH bots irritate me.</p>
+                <p>I noticed a lot of automated login attempts to SSH into my server a while back.  At first, I mitigated this issue by just moving the SSH server to a non-standard port.  This, of course, resolves the issue.</p>
+                <p>However, while bored over winter break, I started thinking about these botnets running around in the wild.  Curious, I decided to start logging them.  So I wrote a custom SSH server that captures every login attempt and stores it in a SQL database.</p>
+                <p>This website is a simple frontpage that hooks into that database and displays information on the attacks.</p>
             </div>
         </div>
     </div>
@@ -24,10 +26,10 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="panel panel-success">
-            <div class="panel-heading">Attempts in the last 24 hours</div>
-            <div class="panel-body">
-                <div id="latest-attempts" style="min-height: 350px; width: 100%;"></div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Map</div>
+            <div class="panel-body" style="padding: 0px;">
+                <div id="map-container" style="margin: 0px; padding: 0px; min-height: 450px; width: 100%;"></div>
             </div>
         </div>
     </div>
@@ -47,6 +49,17 @@
             <div class="panel-body">
                 <h1 class="text-center">'{{ topUser }}':'{{ topPassword }}'</h1>
                 <p class="text-center">Most common password &amp; username combination</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-success">
+            <div class="panel-heading">Attempts in the last 24 hours</div>
+            <div class="panel-body">
+                <div id="latest-attempts" style="min-height: 350px; width: 100%;"></div>
             </div>
         </div>
     </div>
@@ -239,4 +252,54 @@ $(function () {
 });
 </script>
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+<script src="/static/scripts/datamaps.world.min.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $.ajaxSetup({
+            error: function (x, status, error) {
+                alert("An error occurred while fetching map data from the server: " + error);
+            }
+        });
+
+        var bubble_map = new Datamap({
+            element: document.getElementById("map-container"),
+            geographyConfig: {
+                popupOnHover: false,
+                highlightOnHover: false,
+                borderColor: '#ADADAD'
+            },
+            fills: {
+                defaultFill: '#111111',
+                BIG: 'red',
+                MED: 'yellow',
+                SML: '#ABDDA4'
+            },
+            bubblesConfig: {
+                borderWidth: 1
+            }
+        });
+
+        $.ajax({
+            url: "{{ url_for('map_data') }}",
+            type: 'GET',
+            dataType: "json",
+            success: (function (data) {
+                console.log(data);
+                bubble_map.bubbles(data, {
+                    popupTemplate: function (geo, data) {
+                        return '<div class="hoverinfo"><h2 class="text-center" style="margin-top: 0px; margin-bottom: 0px;">' + data.IP + '</h2>'
+                            + '<hr style="margin-top: 0px;"/>'
+                            + '<p class="text-center">' + data.count + ' attempts</p> '
+                            + '<p class="text-center"><strong>' + 'First Seen: ' + '</strong><br/>' + data.firstAttempt + '</p>'
+                            + '<p class="text-center"><strong>' + 'Last Seen: ' + '</strong><br/>' + data.lastAttempt + '</p>'
+                            + '</div>';
+                    }
+                });
+            })
+        });
+    });
+</script>
 {% endblock %}

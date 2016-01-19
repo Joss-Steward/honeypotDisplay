@@ -5,6 +5,7 @@ Routes and views for the flask application.
 from datetime import datetime
 from flask import Flask, request, render_template, jsonify, Response, send_from_directory, stream_with_context
 from HoneypotDataDisplay import app, helpers, settings
+from geoip import geolite2
 import psycopg2
 import json
 import os
@@ -45,29 +46,38 @@ def _home():
     allData['passwords'] = helpers.query("SELECT password as label, COUNT(ID) as data FROM sshattempts GROUP BY password ORDER BY COUNT(ID) DESC LIMIT 10;")
     allData['usernames'] = helpers.query("SELECT username as label, COUNT(ID) as data FROM sshattempts GROUP BY username ORDER BY COUNT(ID) DESC LIMIT 10;")
     allData['sources'] = helpers.query("SELECT IP as label, COUNT(ID) as data FROM sshattempts GROUP BY IP ORDER BY COUNT(ID) DESC LIMIT 10;")
-    allData['history'] = helpers.query("SELECT date_part('epoch', date_trunc('hours', datetime)) * 1000 as t, Count(ID) FROM sshattempts WHERE datetime > (NOW() - '1 days'::INTERVAL) GROUP BY t ORDER BY t DESC;")
+    allData['history'] = helpers.query("SELECT date_part('epoch', date_trunc('hours', datetime)) * 1000 as t, Count(ID) FROM sshattempts WHERE datetime > (NOW() - '7 days'::INTERVAL) GROUP BY t ORDER BY t DESC;")
     return Response(json.dumps(allData),  mimetype='application/json')
 
+@app.route('/_map')
+def map_data():
+    attack_sources = helpers.query("SELECT IP as ip, COUNT(ID) as attempts, MIN(DateTime) as first_attempt, MAX(DateTime) as last_attempt FROM sshattempts GROUP BY IP ORDER BY COUNT(ID) DESC;")
+    total_attacks = helpers.query("SELECT count(*) FROM sshattempts;", one = True)
+    attack_summaries = []
 
-@app.route('/_timeline')
-def event_counts():
-    result = helpers.query("SELECT TOP 50 IP, datetime FROM sshattempts WHERE datetime > (NOW() - '1 day'::INTERVAL) ORDER BY datetime DESC;")
-    return jsonify({'timeline': result})
+    for point in attack_sources:
+        origin = geolite2.lookup(point['ip'])
 
+        if origin is not None:
+            print(origin)
+            radius = ((point['attempts'] / total_attacks['count']) * 100)
+            fill = 'SML'
 
-def stream_template(template_name, **context):
-    app.update_template_context(context)
-    t = app.jinja_env.get_template(template_name)
-    rv = t.stream(context)
-    rv.enable_buffering(5)
-    return rv
+            if radius > 40:
+                fill = 'BIG'
+            elif radius > 20:
+                fill = 'MED'
+            elif radius < 5:
+                radius = 5
 
-@app.route('/ohmygodthisisabadidea')
-def render_giant_page():
-    result = helpers.query("SELECT DateTime, IP, username, password FROM sshattempts ORDER BY datetime DESC;")
-    return Response(stream_with_context(stream_template(
-        'searchable_list.html',
-        title='Home Page',
-        year=datetime.now().year,
-        all_the_events=result,
-    )))
+            attack_summaries.append({
+                'IP': point['ip'],
+                'latitude': origin.location[0],
+                'longitude': origin.location[1],
+                'count': point['attempts'],
+                'fillKey': fill,
+                'firstAttempt': point['first_attempt'].strftime('%Y-%m-%d %H:%M:%S'),
+                'lastAttempt': point['last_attempt'].strftime('%Y-%m-%d %H:%M:%S'),
+                'radius': radius
+            })
+    return Response(json.dumps(attack_summaries),  mimetype='application/json')
