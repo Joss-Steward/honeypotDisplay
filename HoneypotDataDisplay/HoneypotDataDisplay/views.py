@@ -46,7 +46,7 @@ def _home():
     allData['passwords'] = helpers.query("SELECT password as label, COUNT(ID) as data FROM sshattempts GROUP BY password ORDER BY COUNT(ID) DESC LIMIT 10;")
     allData['usernames'] = helpers.query("SELECT username as label, COUNT(ID) as data FROM sshattempts GROUP BY username ORDER BY COUNT(ID) DESC LIMIT 10;")
     allData['sources'] = helpers.query("SELECT IP as label, COUNT(ID) as data FROM sshattempts GROUP BY IP ORDER BY COUNT(ID) DESC LIMIT 10;")
-    allData['history'] = helpers.query("SELECT date_part('epoch', date_trunc('hours', datetime)) * 1000 as t, Count(ID) FROM sshattempts WHERE datetime > (NOW() - '7 days'::INTERVAL) GROUP BY t ORDER BY t DESC;")
+    allData['history'] = helpers.query("SELECT date_part('epoch', date_trunc('hours', datetime)) * 1000 as t, Count(ID) FROM sshattempts WHERE datetime > (NOW() - '1 days'::INTERVAL) GROUP BY t ORDER BY t DESC;")
     return Response(json.dumps(allData),  mimetype='application/json')
 
 @app.route('/_map')
