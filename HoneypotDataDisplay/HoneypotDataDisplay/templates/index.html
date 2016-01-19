@@ -206,19 +206,31 @@ $(function () {
 
             /* Now we just have to do a little massaging to get the historical data into the right format to chart */
             var history = [];
-            var today = new Date().getTime();
-            var yesterday = new Date(today - (25 * 60 * 60 * 1000));
+            var max = data.history[0].t;
+            var min = data.history[0].t;
 
             data.history.forEach(function (entry) {
                 history.push([entry.t, entry.count]);
+                if (entry.t > max) max = entry.t;
+                if (entry.t < min) min = entry.t;
             });
 
             $.plot('#latest-attempts', [history], {
+                series: {
+                    bars: {
+                        show: true,
+                        barWidth: (60 * 60 * 1000),
+                        align: 'left'
+                    }
+                },
+                yaxis: {
+                    min: 0
+                },
                 xaxis: {
                     mode: "time",
                     minTickSize: [1, "hour"],
-                    min: yesterday,
-                    max: (new Date().getTime()),
+                    min: min,
+                    max: max,
                     timezone: "chicago"
                 }
             });

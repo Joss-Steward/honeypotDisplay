@@ -94,6 +94,8 @@
     <Content Include="HoneypotDataDisplay\static\scripts\flot\jquery.min.js" />
     <Content Include="HoneypotDataDisplay\static\scripts\flot\LICENSE.txt" />
     <None Include="Prod.pubxml" />
+    <Content Include="HoneypotDataDisplay\static\scripts\list.js" />
+    <Content Include="HoneypotDataDisplay\templates\searchable_list.html" />
     <Content Include="requirements.txt" />
     <Content Include="HoneypotDataDisplay\static\content\bootstrap.css" />
     <Content Include="HoneypotDataDisplay\static\content\bootstrap.min.css" />
