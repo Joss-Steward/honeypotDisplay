@@ -61,7 +61,6 @@ def map_data():
         origin = geolite2.lookup(point['ip'])
 
         if origin is not None:
-            print(origin)
             radius = ((point['attempts'] / total_attacks['count']) * 100)
             fill = 'SML'
 

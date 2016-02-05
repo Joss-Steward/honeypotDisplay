@@ -150,12 +150,6 @@
 {% endblock %}
 
 {% block scripts %}
-{{super()}}
-
-<script src="/static/scripts/flot/jquery.flot.js"></script>
-<script src="/static/scripts/flot/jquery.flot.pie.js"></script>
-<script src="/static/scripts/flot/jquery.flot.time.js"></script>
-<script src="/static/scripts/flot/jquery.flot.resize.js"></script>
 <script type="text/javascript">
 $(function () {
     $.ajaxSetup({
@@ -251,11 +245,6 @@ $(function () {
     });
 });
 </script>
-
-<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
-<script src="/static/scripts/datamaps.world.min.js"></script>
-
 <script type="text/javascript">
     $(function () {
         $.ajaxSetup({

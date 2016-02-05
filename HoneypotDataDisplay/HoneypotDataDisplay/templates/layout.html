@@ -3,11 +3,17 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} - Honeypot Stats</title>
-    <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
+    <title>{{ title }} - Honeypot Stats</title>    
+
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <script src="/static/scripts/modernizr-2.6.2.js"></script>
+
+    {% assets "all_css" %}
+    <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}" />
+    {% endassets %}
+
+    {% assets "all_js" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
 </head>
 
 <body style="padding-top: 1px;">
@@ -20,9 +26,6 @@
     </div>
 
     {% block scripts %}
-    <script src="/static/scripts/jquery-1.10.2.min.js"></script>
-    <script src="/static/scripts/bootstrap.min.js"></script>
-    <script src="/static/scripts/respond.min.js"></script>
     {% endblock %}
 </body>
 </html>

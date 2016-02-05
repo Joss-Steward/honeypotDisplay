@@ -56,6 +56,7 @@
     <Content Include="HoneypotDataDisplay\config.ini" />
     <Content Include="HoneypotDataDisplay\config.ini.sample" />
     <Content Include="HoneypotDataDisplay\static\favicon.ico" />
+    <Content Include="HoneypotDataDisplay\static\scripts\d3.3.5.3.min.js" />
     <Content Include="HoneypotDataDisplay\static\scripts\datamaps.world.min.js" />
     <Content Include="HoneypotDataDisplay\static\scripts\flot\excanvas.js" />
     <Content Include="HoneypotDataDisplay\static\scripts\flot\excanvas.min.js" />
@@ -96,6 +97,7 @@
     <Content Include="HoneypotDataDisplay\static\scripts\flot\LICENSE.txt" />
     <None Include="Prod.pubxml" />
     <Content Include="HoneypotDataDisplay\static\scripts\list.js" />
+    <Content Include="HoneypotDataDisplay\static\scripts\topojson.min.js" />
     <Content Include="requirements.txt" />
     <Content Include="HoneypotDataDisplay\static\content\bootstrap.css" />
     <Content Include="HoneypotDataDisplay\static\content\bootstrap.min.css" />
