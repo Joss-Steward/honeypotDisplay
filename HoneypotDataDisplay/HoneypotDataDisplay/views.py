@@ -40,6 +40,8 @@ def home():
         topPassword=topCombo['password'],
     )
 
+# So a chart gets a little out of date... not really a huge deal.
+@cache.cached(timeout=600, key_prefix='_home')
 @app.route('/_home')
 def _home():
     allData = {}
