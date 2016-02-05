@@ -84,3 +84,18 @@ def map_data():
                 'radius': radius
             })
     return Response(json.dumps(attack_summaries),  mimetype='application/json')
+
+@app.route('/api.csv')
+def you_asked_for_it():
+    def csv():
+        conn = psycopg2.connect(settings.ConnectionString)
+        cursor = conn.cursor()
+        query = "SELECT DateTime, IP, username, password FROM sshattempts ORDER BY DateTime DESC;"
+        cursor.execute(query)
+
+        yield ','.join(d[0] for d in cursor.description) + '\r\n'
+        
+        for row in cursor.fetchall():
+            yield ','.join(str(e) for e in row) + '\r\n'
+
+    return Response(csv(), mimetype='text/csv')
