@@ -11,24 +11,6 @@
 </head>
 
 <body style="padding-top: 1px;">
-    <!--<div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="/" class="navbar-brand">Cookie Jar</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="{{ url_for('home') }}">Home</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>-->
-
     <div class="container body-content">
         {% block content %}{% endblock %}
         <hr />
@@ -42,6 +24,5 @@
     <script src="/static/scripts/bootstrap.min.js"></script>
     <script src="/static/scripts/respond.min.js"></script>
     {% endblock %}
-
 </body>
 </html>

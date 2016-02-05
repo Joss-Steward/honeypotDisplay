@@ -4,7 +4,7 @@ Routes and views for the flask application.
 
 from datetime import datetime
 from flask import Flask, request, render_template, jsonify, Response, send_from_directory, stream_with_context
-from HoneypotDataDisplay import app, helpers, settings
+from HoneypotDataDisplay import app, helpers, settings, cache
 from geoip import geolite2
 import psycopg2
 import json
@@ -25,7 +25,7 @@ def favicon():
 @app.route('/')
 @app.route('/home')
 def home():
-    lastFifty = helpers.query("SELECT DateTime, IP, username, password  FROM sshattempts ORDER BY DateTime DESC LIMIT 50;")
+    lastFifty = helpers.query("SELECT DateTime, IP, username, password FROM sshattempts ORDER BY DateTime DESC LIMIT 50;")
 
     topCount = getCount()
     topCombo = getTopCombo()
@@ -49,6 +49,8 @@ def _home():
     allData['history'] = helpers.query("SELECT date_part('epoch', date_trunc('hours', datetime)) * 1000 as t, Count(ID) FROM sshattempts WHERE datetime > (NOW() - '1 days'::INTERVAL) GROUP BY t ORDER BY t DESC;")
     return Response(json.dumps(allData),  mimetype='application/json')
 
+# The map might render a little out of date, but this is a pretty time-consuming function otherwise.
+@cache.cached(timeout=1800, key_prefix='map_data')
 @app.route('/_map')
 def map_data():
     attack_sources = helpers.query("SELECT IP as ip, COUNT(ID) as attempts, MIN(DateTime) as first_attempt, MAX(DateTime) as last_attempt FROM sshattempts GROUP BY IP ORDER BY COUNT(ID) DESC;")

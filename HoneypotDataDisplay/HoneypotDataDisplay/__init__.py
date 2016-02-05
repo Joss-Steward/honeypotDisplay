@@ -10,5 +10,6 @@ app = Flask(__name__)
 settings.init()
 
 app.debug = settings.DebugEnabled
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 import HoneypotDataDisplay.views
